@@ -1,23 +1,27 @@
 // Debug...
 var debug = true;
 
+// Defaults settings
+var file, canvasGrid;
+var settings = {
+    scaleRatio: 1,
+    cellSize  : 1024,
+    filters: {
+        smoothing   : 0,      // Smoothing the input image ?
+        brightness  : 0,      // Image brightness [-255 to +255]
+        contrast    : 0,      // Image contrast [-255 to +255]
+        gamma       : 0,      // Image gamma correction [0.01 to 7.99]
+        grayscale   : 'none', // Graysale algorithm [average, luma, luma-601, luma-709, luma-240, desaturation, decomposition-[min|max], [red|green|blue]-chanel]
+        shadesOfGray: 256     // Number of shades of gray [2-256]
+    }
+}
+
 // Load file...
-function loadFile(file) {
+function loadFile() {
     console.log('file:', file);
 
     // Create CanvasGrid object
-    var canvasGrid = new CanvasGrid.CanvasGrid({
-        scaleRatio: 0.5,
-        cellSize  : 1024,
-        filters: {
-            smoothing   : false,  // Smoothing the input image ?
-            brightness  : 0,      // Image brightness [-255 to +255]
-            contrast    : 0,      // Image contrast [-255 to +255]
-            gamma       : 0,      // Image gamma correction [0.01 to 7.99]
-            grayscale   : 'luma', // Graysale algorithm [average, luma, luma-601, luma-709, luma-240, desaturation, decomposition-[min|max], [red|green|blue]-chanel]
-            shadesOfGray: 256     // Number of shades of gray [2-256]
-        }
-    });
+    canvasGrid = new CanvasGrid.CanvasGrid(settings);
 
     // <file> can be Image, File URL object or URL string (http://* or data:image/*)
     canvasGrid.load(file).then(function(cg) {
@@ -73,6 +77,13 @@ loadFile('data:image/gif;base64,'+
 var $canvasWrapper = $('#canvasWrapper');
 var $fileName      = $('#fileName');
 var $noFile        = $('#noFile');
+var $file          = $('#file');
+var $pixel         = $('#pixel');
+var $filters       = $('#filters');
+
+var $pixelRGBA   = $pixel.find('.rgba');
+var $pixelColor  = $pixel.find('.color');
+var $pixelCoords = $pixel.find('.coords');
 
 function drawCanvasGrid(cg) {
     //console.info('onCanvas:', canvas);
@@ -95,10 +106,47 @@ function drawCanvasGrid(cg) {
 
 $(document).ready(function() {
     // On file input change
-    $('#file').on('change', function(event) {
-        var file = event.target.files[0];
+    $file.on('change', function(event) {
+        file = event.target.files[0];
 
         loadFile(file);
+        $filters.show();
         $(this).val(null);
+    });
+
+    // On mouse move
+    $(document).on('mousemove', function(event) {
+        if (! canvasGrid) {
+            return;
+        }
+
+        if (event.pageX >= canvasGrid.size.width || event.pageY >= canvasGrid.size.height) {
+            return;
+        }
+
+        var pixel  = canvasGrid.getPixel(event.pageX, event.pageY);
+        var rgba   = 'rgba(' + pixel.color.r + ',' + pixel.color.g + ',' + pixel.color.b + ',' + (pixel.color.a / 255) + ')';
+        var coords = 'col: ' + pixel.grid.col + ', row: ' + pixel.grid.row + ', x: ' + pixel.coords.x + ', y: ' + pixel.coords.y
+
+        $pixelColor.css('backgroundColor', rgba);
+        $pixelCoords.html(coords);
+        $pixelRGBA.html(rgba);
+        $pixel.show();
+    });
+
+    $canvasWrapper.on('mouseleave', function(event) {
+        $pixel.hide();
+    });
+
+    $filters.find('select, input').on('change', function(event) {
+        var value = this.value;
+
+        if (this.id !== 'grayscale') {
+            value = parseFloat(value);
+        }
+
+        settings.filters[this.id] = value;
+        console.log(settings);
+        loadFile();
     });
 });

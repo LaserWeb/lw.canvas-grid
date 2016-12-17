@@ -21,6 +21,40 @@
             </h3>
             <span id="noFile">No file selected !</span>
             <span id="fileName"></span>
+            <div id="pixel">
+                <label><span class="label">Color :</span> <span class="color"></span> <span class="rgba"></span></label>
+                <label><span class="label">Coords:</span> <span class="coords"></span></label>
+            </div>
+            <div id="filters">
+                <label><span class="label">Smoothing:</span>
+                <select id="smoothing">
+                    <option value="0">no</option>
+                    <option value="1">yes</option>
+                </select>
+                <hr />
+                <label>
+                    <span class="label">Grayscale     :</span>
+                    <select id="grayscale">
+                        <option>none</option>
+                        <option>average</option>
+                        <option>luma</option>
+                        <option>luma-601</option>
+                        <option>luma-709</option>
+                        <option>luma-240</option>
+                        <option>desaturation</option>
+                        <option>decomposition-min</option>
+                        <option>decomposition-max</option>
+                        <option>red-chanel</option>
+                        <option>green-chanel</option>
+                        <option>blue-chanel</option>
+                    </select>
+                </label>
+                <label><span class="label">Shades of gray:</span> <input id="shadesOfGray" type="number" placeholder="256" value="256" min="2" max="256" step="1" /> / 256</label>
+                <hr />
+                <label><span class="label">Brightness:</span> <input id="brightness" type="number" placeholder="0" value="0" min="-255" max="255" step="1" /></label>
+                <label><span class="label">Contrast  :</span> <input id="contrast" type="number" placeholder="0" value="0" min="-255" max="255" step="1" /></label>
+                <label><span class="label">Gamma     :</span> <input id="gamma" type="number" placeholder="0" value="1" min="0" max="3" step="0.01" /></label>
+            </div>
         </div>
         <div id="canvasWrapper"></div>
         <script src="../lw.canvas-grid.js"></script>
