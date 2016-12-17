@@ -15,12 +15,11 @@ class CanvasGrid {
         this.file   = null
         this.image  = null
         this.url    = null
-        this.src    = null
         this.canvas = []
         this.pixels = []
     }
 
-    // <input> can be Image, File URL object or URL string (http://* or data:image/*)
+    // <input> can be Image, File, URL object or URL string (http://* or data:image/*)
     load(input) {
         // Load File object
         if (input instanceof File) {
@@ -50,7 +49,6 @@ class CanvasGrid {
         image.onload = event => {
             this.loadFromImage(image).then(result => {
                 this._processImage()
-                this.src = src
                 resolve(result)
             }).catch(reject)
         }
@@ -131,12 +129,12 @@ class CanvasGrid {
         let canvas  = null
         let context = null
 
-        let x  = null
-        let y  = null
-        let sw = null
-        let sh = null
-        let sx = null
-        let sy = null
+        let x  = null // cols
+        let y  = null // rows
+        let sx = null // scaled cols
+        let sy = null // scaled rows
+        let sw = null // scaled width
+        let sh = null // scaled height
 
         // For each line
         for (y = 0; y < this.size.rows; y++) {
@@ -197,10 +195,43 @@ class CanvasGrid {
         }
     }
 
-    // Apply filters
-    applyFilters(filters) {
-        Object.assign(this.filters, filters || {})
-        this.canvas.forEach(canvas => canvasFilters(canvas, this.filters))
+    getPixel(x, y) {
+        // Test coords validity
+        x = parseInt(x)
+        y = parseInt(y)
+
+        if (isNaN(x) || isNaN(y)) {
+            throw new Error('[x, y] params must be Integer.')
+        }
+
+        // Test coords range
+        if (x < 0 || x >= this.size.width) {
+            throw new Error('Out of range: x = ' + x + ', max: ' + this.size.width)
+        }
+
+        if (y < 0 || y >= this.size.height) {
+            throw new Error('Out of range: y = ' + y + ', max: ' + this.size.height)
+        }
+
+        // Calculate target canvas coords
+        let col = parseInt(x / this.cellSize)
+        let row = parseInt(y / this.cellSize)
+
+        // Adjuste x/y values relative to canvas origin
+        col && (x -= this.cellSize * col)
+        row && (y -= this.cellSize * row)
+
+        // Get pixel data
+        let canvas    = this.canvas[row][col]
+        let context   = canvas.getContext('2d')
+        let pixelData = context.getImageData(x, y, 1, 1).data
+
+        return {
+            color : { r: pixelData[0], g: pixelData[1], b: pixelData[2], a: pixelData[3] },
+            gray  : (pixelData[0] + pixelData[1] + pixelData[2]) / 3,
+            grid  : { col, row },
+            coords: { x, y }
+        }
     }
 }
 
