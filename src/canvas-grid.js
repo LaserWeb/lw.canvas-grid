@@ -117,8 +117,8 @@ class CanvasGrid {
         this.pixels = []
 
         // Calculate grid size
-        let width  = this.image.width * this.scaleRatio
-        let height = this.image.height * this.scaleRatio
+        let width  = Math.round(this.image.width * this.scaleRatio)
+        let height = Math.round(this.image.height * this.scaleRatio)
         let cols   = Math.ceil(width / this.cellSize)
         let rows   = Math.ceil(height / this.cellSize)
 
