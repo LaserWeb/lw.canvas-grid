@@ -1,2 +1,617 @@
-!function(e,t){"object"==typeof exports&&"object"==typeof module?module.exports=t():"function"==typeof define&&define.amd?define("CanvasGrid",[],t):"object"==typeof exports?exports.CanvasGrid=t():e.CanvasGrid=t()}(this,function(){return function(e){function t(a){if(i[a])return i[a].exports;var n=i[a]={exports:{},id:a,loaded:!1};return e[a].call(n.exports,n,n.exports,t),n.loaded=!0,n.exports}var i={};return t.m=e,t.c=i,t.p="",t(0)}([function(e,t,i){e.exports=i(1)},function(e,t,i){"use strict";function a(e){return e&&e.__esModule?e:{default:e}}function n(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(t,"__esModule",{value:!0}),t.CanvasGrid=void 0;var o=function(){function e(e,t){for(var i=0;i<t.length;i++){var a=t[i];a.enumerable=a.enumerable||!1,a.configurable=!0,"value"in a&&(a.writable=!0),Object.defineProperty(e,a.key,a)}}return function(t,i,a){return i&&e(t.prototype,i),a&&e(t,a),t}}(),r=i(2),s=a(r),l=function(){function e(t){n(this,e),this.cellSize=1024,this.scaleRatio=1,this.filters={},Object.assign(this,t||{}),this.size={width:0,height:0,cols:0,rows:0},this.file=null,this.image=null,this.url=null,this.canvas=[],this.pixels=[]}return o(e,[{key:"load",value:function(e){return e instanceof File?this.loadFromFile(e):e instanceof Image?this.loadFromImage(e):"string"==typeof e||e instanceof URL?this.loadFromURL(e.trim()):Promise.reject(new Error("Unsupported input format."))}},{key:"_loadImage",value:function(e,t,i){var a=this,n=new Image;n.onload=function(e){a.loadFromImage(n).then(function(e){a._processImage(),i(e)}).catch(t)},n.onerror=function(i){t(new Error("Error reading file : "+e))},n.src=e}},{key:"loadFromFile",value:function(e){var t=this;return new Promise(function(i,a){e instanceof File||a(new Error("Input param must be a File object.")),t.file=e,t._loadImage(URL.createObjectURL(e),a,i)})}},{key:"loadFromURL",value:function(e){var t=this;return new Promise(function(i,a){e instanceof URL||"string"==typeof e||a(new Error("Input param must be a URL string or object."));var n=e instanceof URL?e:new URL(e);t.url=n,t._loadImage(n,a,i)})}},{key:"loadFromImage",value:function(e){var t=this;return new Promise(function(i,a){e instanceof Image||a(new Error("Input param must be a Image object.")),t.image=e,i(t)})}},{key:"_processImage",value:function(){this.canvas=[],this.pixels=[];var e=Math.round(this.image.width*this.scaleRatio),t=Math.round(this.image.height*this.scaleRatio),i=Math.ceil(e/this.cellSize),a=Math.ceil(t/this.cellSize);this.size={width:e,height:t,cols:i,rows:a};var n=null,o=null,r=null,l=null,h=null,c=null,u=null,d=null,m=null;for(h=0;h<this.size.rows;h++){for(n=[],l=0;l<this.size.cols;l++)o=document.createElement("canvas"),0===l||l<this.size.cols-1?o.width=this.size.width<this.cellSize?this.size.width:this.cellSize:o.width=this.size.width%this.cellSize,0===h||h<this.size.rows-1?o.height=this.size.height<this.cellSize?this.size.height:this.cellSize:o.height=this.size.height%this.cellSize,r=o.getContext("2d"),r.fillStyle="white",r.fillRect(0,0,o.width,o.height),d=o.width/this.scaleRatio,m=o.height/this.scaleRatio,c=l*this.cellSize/this.scaleRatio,u=h*this.cellSize/this.scaleRatio,r.drawImage(this.image,c,u,d,m,0,0,o.width,o.height),(0,s.default)(o,this.filters),n.push(o);this.canvas.push(n)}}},{key:"getPixel",value:function(e,t){if(e=parseInt(e),t=parseInt(t),isNaN(e)||isNaN(t))throw new Error("[x, y] params must be Integer.");if(e<0||e>=this.size.width)throw new Error("Out of range: x = "+e+", max: "+this.size.width);if(t<0||t>=this.size.height)throw new Error("Out of range: y = "+t+", max: "+this.size.height);var i=parseInt(e/this.cellSize),a=parseInt(t/this.cellSize);i&&(e-=this.cellSize*i),a&&(t-=this.cellSize*a);var n=this.canvas[a][i],o=n.getContext("2d"),r=o.getImageData(e,t,1,1).data;return{color:{r:r[0],g:r[1],b:r[2],a:r[3]},gray:(r[0]+r[1]+r[2])/3,grid:{col:i,row:a},coords:{x:e,y:t}}}}]),e}();t.CanvasGrid=l,t.default=l},function(e,t,i){!function(t,i){e.exports=i()}(this,function(){return function(e){function t(a){if(i[a])return i[a].exports;var n=i[a]={exports:{},id:a,loaded:!1};return e[a].call(n.exports,n,n.exports,t),n.loaded=!0,n.exports}var i={};return t.m=e,t.c=i,t.p="",t(0)}([function(e,t,i){e.exports=i(1)},function(e,t){"use strict";function i(e){return e<0?0:e>255?255:e}function a(e,t,a){void 0!==a&&(e[t]=i(e[t]+a),e[t+1]=i(e[t+1]+a),e[t+2]=i(e[t+2]+a))}function n(e,t,a){void 0!==a&&(e[t]=i(a*(e[t]-128)+128),e[t+1]=i(a*(e[t+1]-128)+128),e[t+2]=i(a*(e[t+2]-128)+128))}function o(e,t,a){void 0!==a&&(e[t]=i(Math.exp(Math.log(255*(e[t]/255))*a)),e[t+1]=i(Math.exp(Math.log(255*(e[t+1]/255))*a)),e[t+2]=i(Math.exp(Math.log(255*(e[t+2]/255))*a)))}function r(e,t,a,n){if(l.indexOf(a)===-1)throw new Error("Unsupported grayscale algorithm: "+a);if("none"===a)return null;var o=void 0,r=e[t],s=e[t+1],h=e[t+2];switch(a){case"average":o=(r+s+h)/3;break;case"luma":o=.3*r+.59*s+.11*h;break;case"luma-601":o=.299*r+.587*s+.114*h;break;case"luma-709":o=.2126*r+.7152*s+.0722*h;break;case"luma-240":o=.212*r+.701*s+.087*h;break;case"desaturation":o=(Math.max(r,s,h)+Math.min(r,s,h))/2;break;case"decomposition-min":o=Math.min(r,s,h);break;case"decomposition-max":o=Math.max(r,s,h);break;case"red-chanel":o=r;break;case"green-chanel":o=s;break;case"blue-chanel":o=h}void 0!==n&&(o=parseInt(o/n)*n),o=parseInt(o),e[t]=i(o),e[t+1]=i(o),e[t+2]=i(o)}function s(e,t){t=Object.assign({},{smoothing:!1,brightness:0,contrast:0,gamma:0,grayscale:"none",shadesOfGray:256},t||{});var i=e.getContext("2d");void 0!==i.imageSmoothingEnabled?i.imageSmoothingEnabled=t.smoothing:(i.mozImageSmoothingEnabled=t.smoothing,i.webkitImageSmoothingEnabled=t.smoothing,i.msImageSmoothingEnabled=t.smoothing,i.oImageSmoothingEnabled=t.smoothing);var s=i.getImageData(0,0,e.width,e.height),l=s.data,h=void 0,c=void 0,u=void 0,d=void 0;0!==t.contrast&&(h=259*(t.contrast+255)/(255*(259-t.contrast))),0!==t.brightness&&(c=t.brightness),0!==t.gamma&&(u=1/t.gamma),t.shadesOfGray>1&&t.shadesOfGray<256&&(d=255/(t.shadesOfGray-1));for(var m=0,f=l.length;m<f;m+=4)a(l,m,c),n(l,m,h),o(l,m,u),r(l,m,t.grayscale,d);i.putImageData(s,0,0)}Object.defineProperty(t,"__esModule",{value:!0});var l=["none","average","desaturation","decomposition-min","decomposition-max","luma","luma-601","luma-709","luma-240","red-chanel","green-chanel","blue-chanel"];t.canvasFilters=s,t.default=s}])})}])});
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define("CanvasGrid", [], factory);
+	else if(typeof exports === 'object')
+		exports["CanvasGrid"] = factory();
+	else
+		root["CanvasGrid"] = factory();
+})(this, function() {
+return /******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId])
+/******/ 			return installedModules[moduleId].exports;
+/******/
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			exports: {},
+/******/ 			id: moduleId,
+/******/ 			loaded: false
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(1);
+
+
+/***/ },
+/* 1 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.CanvasGrid = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _lw = __webpack_require__(2);
+	
+	var _lw2 = _interopRequireDefault(_lw);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	// CanvasGrid class
+	var CanvasGrid = function () {
+	    // Class constructor...
+	    function CanvasGrid(settings) {
+	        _classCallCheck(this, CanvasGrid);
+	
+	        // Init properties
+	        this.cellSize = 1024;
+	        this.scaleRatio = { x: 1, y: 1 };
+	        this.filters = {};
+	
+	        Object.assign(this, settings || {});
+	
+	        if (!this.scaleRatio.x) {
+	            this.scaleRatio = { x: this.scaleRatio, y: this.scaleRatio };
+	        }
+	
+	        this.size = { width: 0, height: 0, cols: 0, rows: 0 };
+	        this.file = null;
+	        this.image = null;
+	        this.url = null;
+	        this.canvas = [];
+	        this.pixels = [];
+	    }
+	
+	    // <input> can be Image, File, URL object or URL string (http://* or data:image/*)
+	
+	
+	    _createClass(CanvasGrid, [{
+	        key: 'load',
+	        value: function load(input) {
+	            // Load File object
+	            if (input instanceof File) {
+	                return this.loadFromFile(input);
+	            }
+	
+	            // Load Image object
+	            if (input instanceof Image) {
+	                return this.loadFromImage(input);
+	            }
+	
+	            // Load URL object
+	            if (typeof input === 'string' || input instanceof URL) {
+	                return this.loadFromURL(input.trim());
+	            }
+	
+	            // Return rejected promise with an Error object
+	            return Promise.reject(new Error('Unsupported input format.'));
+	        }
+	
+	        // Load image
+	
+	    }, {
+	        key: '_loadImage',
+	        value: function _loadImage(src, reject, resolve) {
+	            var _this = this;
+	
+	            // Create Image object
+	            var image = new Image();
+	
+	            // Register for load and error events
+	            image.onload = function (event) {
+	                _this.loadFromImage(image).then(resolve).catch(reject);
+	            };
+	
+	            image.onerror = function (event) {
+	                reject(new Error('An error occurred while loading the image : ' + src));
+	            };
+	
+	            // Load the image from File url
+	            image.src = src;
+	        }
+	
+	        // Load from File object
+	
+	    }, {
+	        key: 'loadFromFile',
+	        value: function loadFromFile(input) {
+	            var _this2 = this;
+	
+	            return new Promise(function (resolve, reject) {
+	                // Bad input type
+	                if (!(input instanceof File)) {
+	                    reject(new Error('Input param must be a File object.'));
+	                }
+	
+	                // Set input file
+	                _this2.file = input;
+	
+	                // Load image
+	                _this2._loadImage(URL.createObjectURL(input), reject, resolve);
+	            });
+	        }
+	
+	        // Load from URL object or string
+	
+	    }, {
+	        key: 'loadFromURL',
+	        value: function loadFromURL(input) {
+	            var _this3 = this;
+	
+	            return new Promise(function (resolve, reject) {
+	                // Bad input type
+	                if (!(input instanceof URL) && typeof input !== 'string') {
+	                    reject(new Error('Input param must be a URL string or object.'));
+	                }
+	
+	                // Create url object
+	                var url = input instanceof URL ? input : new URL(input);
+	
+	                // Set url
+	                _this3.url = url;
+	
+	                // Load image
+	                _this3._loadImage(url, reject, resolve);
+	            });
+	        }
+	
+	        // Load from Image object
+	
+	    }, {
+	        key: 'loadFromImage',
+	        value: function loadFromImage(input) {
+	            var _this4 = this;
+	
+	            return new Promise(function (resolve, reject) {
+	                // Bad input type
+	                if (!(input instanceof Image)) {
+	                    reject(new Error('Input param must be a Image object.'));
+	                }
+	
+	                // Set input image
+	                _this4.image = input;
+	
+	                // Process image
+	                _this4._processImage();
+	
+	                // Resolve the promise
+	                resolve(_this4);
+	            });
+	        }
+	    }, {
+	        key: '_processImage',
+	        value: function _processImage() {
+	            // Reset canvas grid
+	            this.canvas = [];
+	            this.pixels = [];
+	
+	            // Calculate grid size
+	            var width = Math.round(this.image.width * this.scaleRatio.x);
+	            var height = Math.round(this.image.height * this.scaleRatio.y);
+	            var cols = Math.ceil(width / this.cellSize);
+	            var rows = Math.ceil(height / this.cellSize);
+	
+	            this.size = { width: width, height: height, cols: cols, rows: rows };
+	
+	            // Create canvas grid
+	            var line = null;
+	            var canvas = null;
+	            var context = null;
+	
+	            var x = null; // cols
+	            var y = null; // rows
+	            var sx = null; // scaled cols
+	            var sy = null; // scaled rows
+	            var sw = null; // scaled width
+	            var sh = null; // scaled height
+	
+	            // For each line
+	            for (y = 0; y < this.size.rows; y++) {
+	                // Reset current line
+	                line = [];
+	
+	                // For each column
+	                for (x = 0; x < this.size.cols; x++) {
+	                    // Create canvas element
+	                    canvas = document.createElement('canvas');
+	
+	                    // Set canvas size
+	                    if (x === 0 || x < this.size.cols - 1) {
+	                        canvas.width = this.size.width < this.cellSize ? this.size.width : this.cellSize;
+	                    } else {
+	                        // Get the rest for the last item (except the first one)
+	                        canvas.width = this.size.width % this.cellSize;
+	                    }
+	
+	                    if (y === 0 || y < this.size.rows - 1) {
+	                        canvas.height = this.size.height < this.cellSize ? this.size.height : this.cellSize;
+	                    } else {
+	                        // Get the rest for the last item (except the first one)
+	                        canvas.height = this.size.height % this.cellSize;
+	                    }
+	
+	                    // Get canvas 2d context
+	                    context = canvas.getContext('2d');
+	
+	                    // Fill withe background (avoid alpha chanel calculation)
+	                    context.fillStyle = 'white';
+	                    context.fillRect(0, 0, canvas.width, canvas.height);
+	
+	                    // Draw the part of image in the canvas (scale)
+	                    sw = canvas.width / this.scaleRatio.x;
+	                    sh = canvas.height / this.scaleRatio.y;
+	                    sx = x * this.cellSize / this.scaleRatio.x;
+	                    sy = y * this.cellSize / this.scaleRatio.y;
+	
+	                    context.drawImage(this.image, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+	
+	                    // Apply image filters
+	                    (0, _lw2.default)(canvas, this.filters);
+	
+	                    // Add the canvas to current line
+	                    line.push(canvas);
+	                }
+	
+	                // Add the line to canvas grid
+	                this.canvas.push(line);
+	            }
+	        }
+	    }, {
+	        key: 'getPixel',
+	        value: function getPixel(x, y) {
+	            // Test coords validity
+	            x = parseInt(x);
+	            y = parseInt(y);
+	
+	            if (isNaN(x) || isNaN(y)) {
+	                throw new Error('[x, y] params must be Integer.');
+	            }
+	
+	            // Test coords range
+	            if (x < 0 || x >= this.size.width) {
+	                throw new Error('Out of range: x = ' + x + ', max: ' + this.size.width);
+	            }
+	
+	            if (y < 0 || y >= this.size.height) {
+	                throw new Error('Out of range: y = ' + y + ', max: ' + this.size.height);
+	            }
+	
+	            // Calculate target canvas coords
+	            var col = parseInt(x / this.cellSize);
+	            var row = parseInt(y / this.cellSize);
+	
+	            // Adjuste x/y values relative to canvas origin
+	            col && (x -= this.cellSize * col);
+	            row && (y -= this.cellSize * row);
+	
+	            // Get pixel data
+	            var canvas = this.canvas[row][col];
+	            var context = canvas.getContext('2d');
+	            var pixelData = context.getImageData(x, y, 1, 1).data;
+	
+	            return {
+	                color: { r: pixelData[0], g: pixelData[1], b: pixelData[2], a: pixelData[3] },
+	                gray: (pixelData[0] + pixelData[1] + pixelData[2]) / 3,
+	                grid: { col: col, row: row },
+	                coords: { x: x, y: y }
+	            };
+	        }
+	    }]);
+	
+	    return CanvasGrid;
+	}();
+	
+	// Exports
+	
+	
+	exports.CanvasGrid = CanvasGrid;
+	exports.default = CanvasGrid;
+
+/***/ },
+/* 2 */
+/***/ function(module, exports, __webpack_require__) {
+
+	(function webpackUniversalModuleDefinition(root, factory) {
+		if(true)
+			module.exports = factory();
+		else if(typeof define === 'function' && define.amd)
+			define("CanvasFilter", [], factory);
+		else if(typeof exports === 'object')
+			exports["CanvasFilter"] = factory();
+		else
+			root["CanvasFilter"] = factory();
+	})(this, function() {
+	return /******/ (function(modules) { // webpackBootstrap
+	/******/ 	// The module cache
+	/******/ 	var installedModules = {};
+	/******/
+	/******/ 	// The require function
+	/******/ 	function __webpack_require__(moduleId) {
+	/******/
+	/******/ 		// Check if module is in cache
+	/******/ 		if(installedModules[moduleId])
+	/******/ 			return installedModules[moduleId].exports;
+	/******/
+	/******/ 		// Create a new module (and put it into the cache)
+	/******/ 		var module = installedModules[moduleId] = {
+	/******/ 			exports: {},
+	/******/ 			id: moduleId,
+	/******/ 			loaded: false
+	/******/ 		};
+	/******/
+	/******/ 		// Execute the module function
+	/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+	/******/
+	/******/ 		// Flag the module as loaded
+	/******/ 		module.loaded = true;
+	/******/
+	/******/ 		// Return the exports of the module
+	/******/ 		return module.exports;
+	/******/ 	}
+	/******/
+	/******/
+	/******/ 	// expose the modules object (__webpack_modules__)
+	/******/ 	__webpack_require__.m = modules;
+	/******/
+	/******/ 	// expose the module cache
+	/******/ 	__webpack_require__.c = installedModules;
+	/******/
+	/******/ 	// __webpack_public_path__
+	/******/ 	__webpack_require__.p = "";
+	/******/
+	/******/ 	// Load entry module and return exports
+	/******/ 	return __webpack_require__(0);
+	/******/ })
+	/************************************************************************/
+	/******/ ([
+	/* 0 */
+	/***/ function(module, exports, __webpack_require__) {
+	
+		module.exports = __webpack_require__(1);
+	
+	
+	/***/ },
+	/* 1 */
+	/***/ function(module, exports) {
+	
+		'use strict';
+		
+		Object.defineProperty(exports, "__esModule", {
+		    value: true
+		});
+		// Grayscale algorithms
+		var grayscaleAlgorithms = ['none', 'average', 'desaturation', 'decomposition-min', 'decomposition-max', 'luma', 'luma-601', 'luma-709', 'luma-240', 'red-chanel', 'green-chanel', 'blue-chanel'];
+		
+		// Trucate color value in the 0-255 range
+		function color(color) {
+		    return color < 0 ? 0 : color > 255 ? 255 : color;
+		}
+		
+		// Filters ...
+		function brightness(data, i, value) {
+		    if (value !== undefined) {
+		        data[i] = color(data[i] + value);
+		        data[i + 1] = color(data[i + 1] + value);
+		        data[i + 2] = color(data[i + 2] + value);
+		    }
+		}
+		
+		function contrast(data, i, value) {
+		    if (value !== undefined) {
+		        data[i] = color(value * (data[i] - 128) + 128);
+		        data[i + 1] = color(value * (data[i + 1] - 128) + 128);
+		        data[i + 2] = color(value * (data[i + 2] - 128) + 128);
+		    }
+		}
+		
+		function gamma(data, i, value) {
+		    if (value !== undefined) {
+		        data[i] = color(Math.exp(Math.log(255 * (data[i] / 255)) * value));
+		        data[i + 1] = color(Math.exp(Math.log(255 * (data[i + 1] / 255)) * value));
+		        data[i + 2] = color(Math.exp(Math.log(255 * (data[i + 2] / 255)) * value));
+		    }
+		}
+		
+		function grayscale(data, i, algorithm, shades) {
+		    // Graysale
+		    // http://www.tannerhelland.com/3643/grayscale-image-algorithm-vb6/
+		
+		    // Unsupported algorithm
+		    if (grayscaleAlgorithms.indexOf(algorithm) === -1) {
+		        throw new Error('Unsupported grayscale algorithm: ' + algorithm);
+		    }
+		
+		    // None
+		    if (algorithm === 'none') {
+		        return null;
+		    }
+		
+		    // Get Red/Green/Blue values
+		    var gray = void 0;
+		    var r = data[i];
+		    var g = data[i + 1];
+		    var b = data[i + 2];
+		
+		    switch (algorithm) {
+		        case 'average':
+		            gray = (r + g + b) / 3;
+		            break;
+		
+		        case 'luma':
+		            // Default
+		            gray = r * 0.3 + g * 0.59 + b * 0.11;
+		            break;
+		
+		        case 'luma-601':
+		            // CCIR-601
+		            gray = r * 0.299 + g * 0.587 + b * 0.114;
+		            break;
+		
+		        case 'luma-709':
+		            // ITU-R-709
+		            gray = r * 0.2126 + g * 0.7152 + b * 0.0722;
+		            break;
+		
+		        case 'luma-240':
+		            // SMPTE-240M
+		            gray = r * 0.212 + g * 0.701 + b * 0.087;
+		            break;
+		
+		        case 'desaturation':
+		            gray = (Math.max(r, g, b) + Math.min(r, g, b)) / 2;
+		            break;
+		
+		        case 'decomposition-min':
+		            gray = Math.min(r, g, b);
+		            break;
+		
+		        case 'decomposition-max':
+		            gray = Math.max(r, g, b);
+		            break;
+		
+		        case 'red-chanel':
+		            gray = r;
+		            break;
+		
+		        case 'green-chanel':
+		            gray = g;
+		            break;
+		
+		        case 'blue-chanel':
+		            gray = b;
+		            break;
+		    }
+		
+		    // Shades of gray
+		    if (shades !== undefined) {
+		        gray = parseInt(gray / shades) * shades;
+		    }
+		
+		    // Force integer
+		    gray = parseInt(gray);
+		
+		    // Set new r/g/b values
+		    data[i] = color(gray);
+		    data[i + 1] = color(gray);
+		    data[i + 2] = color(gray);
+		}
+		
+		// Apply filters on provided canvas
+		function canvasFilters(canvas, settings) {
+		    settings = Object.assign({}, {
+		        smoothing: false, // Smoothing [true|fale]
+		        brightness: 0, // Image brightness [-255 to +255]
+		        contrast: 0, // Image contrast [-255 to +255]
+		        gamma: 0, // Image gamma correction [0.01 to 7.99]
+		        grayscale: 'none', // Graysale algorithm [average, luma, luma-601, luma-709, luma-240, desaturation, decomposition-[min|max], [red|green|blue]-chanel]
+		        shadesOfGray: 256 // Number of shades of gray [2-256]
+		    }, settings || {});
+		
+		    // Get canvas 2d context
+		    var context = canvas.getContext('2d');
+		
+		    // Smoothing
+		    if (context.imageSmoothingEnabled !== undefined) {
+		        context.imageSmoothingEnabled = settings.smoothing;
+		    } else {
+		        context.mozImageSmoothingEnabled = settings.smoothing;
+		        context.webkitImageSmoothingEnabled = settings.smoothing;
+		        context.msImageSmoothingEnabled = settings.smoothing;
+		        context.oImageSmoothingEnabled = settings.smoothing;
+		    }
+		
+		    // Get image data
+		    var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+		    var data = imageData.data;
+		
+		    var contrastFactor = void 0,
+		        brightnessOffset = void 0,
+		        gammaCorrection = void 0,
+		        shadesOfGrayFactor = void 0;
+		
+		    if (settings.contrast !== 0) {
+		        contrastFactor = 259 * (settings.contrast + 255) / (255 * (259 - settings.contrast));
+		    }
+		
+		    if (settings.brightness !== 0) {
+		        brightnessOffset = settings.brightness;
+		    }
+		
+		    if (settings.gamma !== 0) {
+		        gammaCorrection = 1 / settings.gamma;
+		    }
+		
+		    // Shades of gray
+		    if (settings.shadesOfGray > 1 && settings.shadesOfGray < 256) {
+		        shadesOfGrayFactor = 255 / (settings.shadesOfGray - 1);
+		    }
+		
+		    // For each pixel
+		    for (var i = 0, il = data.length; i < il; i += 4) {
+		        // Apply filters
+		        brightness(data, i, brightnessOffset);
+		        contrast(data, i, contrastFactor);
+		        gamma(data, i, gammaCorrection);
+		        grayscale(data, i, settings.grayscale, shadesOfGrayFactor);
+		    }
+		
+		    // Write new image data on the context
+		    context.putImageData(imageData, 0, 0);
+		}
+		
+		// Exports
+		exports.canvasFilters = canvasFilters;
+		exports.default = canvasFilters;
+	
+	/***/ }
+	/******/ ])
+	});
+	;
+	//# sourceMappingURL=lw.canvas-filters.js.map
+
+/***/ }
+/******/ ])
+});
+;
 //# sourceMappingURL=lw.canvas-grid.js.map
