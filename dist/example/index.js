@@ -4,8 +4,8 @@ var debug = true;
 // Defaults settings
 var file, canvasGrid;
 var settings = {
-    scaleRatio: 1,
-    cellSize  : 1024,
+    cellSize  : 1024,           // Maximum size for one canvas (cell)
+    scaleRatio: { x: 1, y: 1 }, // Resize (can be integer for uniform scaling)
     filters: {
         smoothing   : 0,      // Smoothing the input image ?
         brightness  : 0,      // Image brightness [-255 to +255]

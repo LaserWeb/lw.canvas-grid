@@ -34,8 +34,8 @@ Or download the last build from https://raw.githubusercontent.com/lautr3k/lw.can
 ## Settings
 ```javascript
 let settings = {
-    scaleRatio: 1,    // Scaling ratio
-    cellSize  : 2048, // Canvas max size (width and height)
+    cellSize  : 1024,           // Maximum size for one canvas (cell)
+    scaleRatio: { x: 1, y: 1 }, // Resize (can be integer for uniform scaling)
     filters   : {
         smoothing   : false,  // Smoothing the input image ?
         brightness  : 0,      // Image brightness [-255 to +255]

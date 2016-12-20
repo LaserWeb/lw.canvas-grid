@@ -6,10 +6,14 @@ class CanvasGrid {
     constructor(settings) {
         // Init properties
         this.cellSize   = 1024
-        this.scaleRatio = 1
+        this.scaleRatio = { x: 1, y: 1 }
         this.filters    = {}
 
         Object.assign(this, settings || {})
+
+        if (! this.scaleRatio.x) {
+            this.scaleRatio = { x: this.scaleRatio, y: this.scaleRatio }
+        }
 
         this.size   = { width: 0, height: 0, cols: 0, rows: 0 }
         this.file   = null
@@ -118,8 +122,8 @@ class CanvasGrid {
         this.pixels = []
 
         // Calculate grid size
-        let width  = Math.round(this.image.width * this.scaleRatio)
-        let height = Math.round(this.image.height * this.scaleRatio)
+        let width  = Math.round(this.image.width * this.scaleRatio.x)
+        let height = Math.round(this.image.height * this.scaleRatio.y)
         let cols   = Math.ceil(width / this.cellSize)
         let rows   = Math.ceil(height / this.cellSize)
 
@@ -174,10 +178,10 @@ class CanvasGrid {
                 context.fillRect(0, 0, canvas.width, canvas.height)
 
                 // Draw the part of image in the canvas (scale)
-                sw = canvas.width / this.scaleRatio
-                sh = canvas.height / this.scaleRatio
-                sx = x * this.cellSize / this.scaleRatio
-                sy = y * this.cellSize / this.scaleRatio
+                sw = canvas.width / this.scaleRatio.x
+                sh = canvas.height / this.scaleRatio.y
+                sx = x * this.cellSize / this.scaleRatio.x
+                sy = y * this.cellSize / this.scaleRatio.y
 
                 context.drawImage(
                     this.image, sx, sy, sw, sh,
