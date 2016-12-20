@@ -47,14 +47,11 @@ class CanvasGrid {
 
         // Register for load and error events
         image.onload = event => {
-            this.loadFromImage(image).then(result => {
-                this._processImage()
-                resolve(result)
-            }).catch(reject)
+            this.loadFromImage(image).then(resolve).catch(reject)
         }
 
         image.onerror = event => {
-            reject(new Error('Error reading file : ' + src))
+            reject(new Error('An error occurred while loading the image : ' + src))
         }
 
         // Load the image from File url
@@ -107,6 +104,10 @@ class CanvasGrid {
             // Set input image
             this.image = input
 
+            // Process image
+            this._processImage()
+
+            // Resolve the promise
             resolve(this)
         })
     }
