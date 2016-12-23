@@ -1,6 +1,6 @@
 {
   "name": "lw.canvas-grid",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Canvas grid for LaserWeb",
   "main": "./dist/lw.canvas-grid.js",
   "scripts": {
