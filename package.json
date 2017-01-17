@@ -1,6 +1,6 @@
 {
   "name": "lw.canvas-grid",
-  "version": "0.2.3",
+  "version": "0.2.5",
   "description": "Canvas grid for LaserWeb",
   "main": "./dist/lw.canvas-grid.js",
   "scripts": {
@@ -32,6 +32,6 @@
     "webpack-dev-server": "^1.16.2"
   },
   "dependencies": {
-    "lw.canvas-filters": "^0.1.0"
+    "lw.canvas-filters": "^0.2.0"
   }
 }
