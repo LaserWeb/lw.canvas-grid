@@ -132,6 +132,7 @@ class CanvasGrid {
         // Create canvas grid
         let line    = null
         let canvas  = null
+        let pixels  = null
         let context = null
 
         let x  = null // cols
@@ -144,7 +145,8 @@ class CanvasGrid {
         // For each line
         for (y = 0; y < this.size.rows; y++) {
             // Reset current line
-            line = []
+            line   = []
+            pixels = []
 
             // For each column
             for (x = 0; x < this.size.cols; x++) {
@@ -193,9 +195,13 @@ class CanvasGrid {
 
                 // Add the canvas to current line
                 line.push(canvas)
+
+                // Add the canvas image data to current line
+                pixels.push(context.getImageData(0, 0, canvas.width, canvas.height).data)
             }
 
             // Add the line to canvas grid
+            this.pixels.push(pixels)
             this.canvas.push(line)
         }
     }
@@ -227,9 +233,18 @@ class CanvasGrid {
         row && (y -= this.cellSize * row)
 
         // Get pixel data
-        let canvas    = this.canvas[row][col]
-        let context   = canvas.getContext('2d')
-        let pixelData = context.getImageData(x, y, 1, 1).data
+        let cellSize  = this.cellSize;
+
+        if (this.size.width < cellSize) {
+            cellSize = this.size.width
+        }
+        else if (this.size.width < cellSize * (col + 1)) {
+            cellSize = this.size.width % cellSize
+        }
+
+        let i         = (y * (cellSize * 4)) + (x * 4)
+        let pixels    = this.pixels[row][col]
+        let pixelData = pixels.slice(i, i + 4)
 
         return {
             color : { r: pixelData[0], g: pixelData[1], b: pixelData[2], a: pixelData[3] },
